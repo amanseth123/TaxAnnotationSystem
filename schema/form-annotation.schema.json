@@ -1,0 +1,552 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://instead.com/schemas/form-annotation/v1",
+  "title": "Tax Form Annotation Schema",
+  "description": "Defines the structure for annotating fields and boxes on U.S. tax forms. Enables programmatic rendering and printing of taxpayer values onto form templates with precise positioning.",
+  "type": "object",
+  "required": ["metadata", "pages"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "Optional JSON Schema reference for editor support"
+    },
+    "metadata": {
+      "$ref": "#/$defs/FormMetadata"
+    },
+    "pages": {
+      "type": "array",
+      "description": "Ordered list of pages in the form, each containing field annotations",
+      "items": {
+        "$ref": "#/$defs/Page"
+      },
+      "minItems": 1
+    },
+    "fieldGroups": {
+      "type": "array",
+      "description": "Logical groupings of fields for UI organization and batch operations",
+      "items": {
+        "$ref": "#/$defs/FieldGroup"
+      }
+    }
+  },
+
+  "$defs": {
+
+    "FormMetadata": {
+      "type": "object",
+      "description": "Metadata identifying the form and its annotation version",
+      "required": ["formId", "formNumber", "title", "taxYear", "version"],
+      "additionalProperties": false,
+      "properties": {
+        "formId": {
+          "type": "string",
+          "description": "Unique identifier for this annotation definition (e.g., 'irs-1040-2024-v1')",
+          "pattern": "^[a-z0-9][a-z0-9-]*$"
+        },
+        "formNumber": {
+          "type": "string",
+          "description": "Official IRS form number (e.g., '1040', 'W-2', 'Schedule C')"
+        },
+        "title": {
+          "type": "string",
+          "description": "Human-readable form title (e.g., 'U.S. Individual Income Tax Return')"
+        },
+        "taxYear": {
+          "type": "integer",
+          "description": "Tax year this annotation applies to",
+          "minimum": 2000,
+          "maximum": 2100
+        },
+        "revision": {
+          "type": "string",
+          "description": "IRS form revision identifier (e.g., 'Rev. January 2024')"
+        },
+        "version": {
+          "type": "string",
+          "description": "Semantic version of this annotation file (e.g., '1.0.0')",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$"
+        },
+        "description": {
+          "type": "string",
+          "description": "Optional description of the form's purpose"
+        },
+        "pageSize": {
+          "type": "string",
+          "description": "Standard page size name",
+          "enum": ["letter", "legal", "a4"],
+          "default": "letter"
+        },
+        "coordinateSystem": {
+          "$ref": "#/$defs/CoordinateSystem"
+        }
+      }
+    },
+
+    "CoordinateSystem": {
+      "type": "object",
+      "description": "Defines the coordinate system used for all position values in this annotation",
+      "additionalProperties": false,
+      "properties": {
+        "origin": {
+          "type": "string",
+          "description": "Location of the coordinate origin on each page",
+          "enum": ["bottom-left", "top-left"],
+          "default": "bottom-left"
+        },
+        "units": {
+          "type": "string",
+          "description": "Unit of measurement for all coordinate values",
+          "enum": ["points", "inches", "millimeters"],
+          "default": "points"
+        },
+        "pointsPerInch": {
+          "type": "number",
+          "description": "Points per inch (standard PDF = 72)",
+          "default": 72
+        }
+      }
+    },
+
+    "Page": {
+      "type": "object",
+      "description": "A single page of the form containing field annotations",
+      "required": ["pageNumber", "dimensions", "fields"],
+      "additionalProperties": false,
+      "properties": {
+        "pageNumber": {
+          "type": "integer",
+          "description": "1-based page number",
+          "minimum": 1
+        },
+        "dimensions": {
+          "$ref": "#/$defs/Dimensions"
+        },
+        "templateImage": {
+          "type": "string",
+          "description": "Optional path or URL to the form template image/PDF for this page"
+        },
+        "fields": {
+          "type": "array",
+          "description": "All annotated fields on this page",
+          "items": {
+            "$ref": "#/$defs/Field"
+          }
+        }
+      }
+    },
+
+    "Dimensions": {
+      "type": "object",
+      "description": "Page dimensions in coordinate units. US Letter = 612×792 points",
+      "required": ["width", "height"],
+      "additionalProperties": false,
+      "properties": {
+        "width": {
+          "type": "number",
+          "description": "Page width in coordinate units",
+          "exclusiveMinimum": 0
+        },
+        "height": {
+          "type": "number",
+          "description": "Page height in coordinate units",
+          "exclusiveMinimum": 0
+        }
+      }
+    },
+
+    "Field": {
+      "type": "object",
+      "description": "Annotation for a single field/box on the tax form. Defines its position, type, formatting, and how to resolve its value from taxpayer data.",
+      "required": ["id", "type", "position"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique hierarchical identifier (e.g., 'f1040.page1.line1a'). Must be unique across all pages.",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.]*$"
+        },
+        "label": {
+          "type": "string",
+          "description": "Human-readable field label for display and debugging"
+        },
+        "irsLine": {
+          "type": "string",
+          "description": "Official IRS line number or box identifier (e.g., '1a', '7', 'Box 1')"
+        },
+        "type": {
+          "$ref": "#/$defs/FieldType"
+        },
+        "position": {
+          "$ref": "#/$defs/Position"
+        },
+        "formatting": {
+          "$ref": "#/$defs/Formatting"
+        },
+        "dataRef": {
+          "type": "string",
+          "description": "JSONPath expression to resolve the field value from the taxpayer data object (e.g., '$.taxpayer.primary.firstName', '$.income.wages[0].amount')"
+        },
+        "computation": {
+          "$ref": "#/$defs/Computation"
+        },
+        "validation": {
+          "$ref": "#/$defs/Validation"
+        },
+        "overflow": {
+          "$ref": "#/$defs/OverflowConfig"
+        },
+        "readOnly": {
+          "type": "boolean",
+          "description": "If true, this field is computed or system-generated and should not accept direct input",
+          "default": false
+        },
+        "conditionalVisibility": {
+          "$ref": "#/$defs/ConditionalVisibility"
+        },
+        "options": {
+          "type": "array",
+          "description": "For 'enum' type fields: the available options (e.g., filing status radio buttons). Each option may have its own position override.",
+          "items": {
+            "$ref": "#/$defs/EnumOption"
+          }
+        },
+        "combDigits": {
+          "type": "integer",
+          "description": "For 'comb' type fields: the number of individual character boxes (e.g., 9 for SSN without dashes, 3 for area code)",
+          "minimum": 1
+        },
+        "section": {
+          "type": "string",
+          "description": "Logical section of the form this field belongs to (e.g., 'Income', 'Deductions')"
+        }
+      }
+    },
+
+    "FieldType": {
+      "type": "string",
+      "description": "The semantic type of the field, which determines default formatting and rendering behavior",
+      "enum": [
+        "text",
+        "currency",
+        "checkbox",
+        "ssn",
+        "ein",
+        "date",
+        "percentage",
+        "integer",
+        "enum",
+        "comb"
+      ]
+    },
+
+    "Position": {
+      "type": "object",
+      "description": "Position and dimensions of the field on the page. Coordinates are relative to the page origin (default: bottom-left). For PDF output: x,y represents the bottom-left corner of the field box.",
+      "required": ["x", "y", "width", "height"],
+      "additionalProperties": false,
+      "properties": {
+        "x": {
+          "type": "number",
+          "description": "Horizontal distance from the left edge of the page",
+          "minimum": 0
+        },
+        "y": {
+          "type": "number",
+          "description": "Vertical distance from the origin (bottom for bottom-left, top for top-left)",
+          "minimum": 0
+        },
+        "width": {
+          "type": "number",
+          "description": "Width of the field box",
+          "exclusiveMinimum": 0
+        },
+        "height": {
+          "type": "number",
+          "description": "Height of the field box",
+          "exclusiveMinimum": 0
+        }
+      }
+    },
+
+    "Formatting": {
+      "type": "object",
+      "description": "Controls how the field value is rendered within its box. All properties have sensible defaults based on the field type.",
+      "additionalProperties": false,
+      "properties": {
+        "fontFamily": {
+          "type": "string",
+          "description": "Font family for text rendering. Courier is IRS-standard for data entry (IRS Pub 1167).",
+          "enum": ["Courier", "Helvetica", "Courier-Bold", "Helvetica-Bold", "Times-Roman", "Times-Bold"],
+          "default": "Courier"
+        },
+        "fontSize": {
+          "type": "number",
+          "description": "Font size in points. IRS minimum is 8pt; 10pt is standard.",
+          "default": 10,
+          "minimum": 6,
+          "maximum": 24
+        },
+        "fontWeight": {
+          "type": "string",
+          "description": "Font weight for rendering",
+          "enum": ["normal", "bold"],
+          "default": "normal"
+        },
+        "alignment": {
+          "type": "string",
+          "description": "Horizontal text alignment within the field box",
+          "enum": ["left", "right", "center"],
+          "default": "left"
+        },
+        "verticalAlignment": {
+          "type": "string",
+          "description": "Vertical text alignment within the field box",
+          "enum": ["top", "middle", "bottom"],
+          "default": "bottom"
+        },
+        "color": {
+          "type": "string",
+          "description": "Text color as hex value (e.g., '#000000')",
+          "default": "#000000",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "backgroundColor": {
+          "type": "string",
+          "description": "Optional background fill color as hex value",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "padding": {
+          "$ref": "#/$defs/Padding"
+        },
+        "letterSpacing": {
+          "type": "number",
+          "description": "Additional spacing between characters in points (useful for comb-style fields)",
+          "default": 0,
+          "minimum": 0
+        },
+        "lineHeight": {
+          "type": "number",
+          "description": "Line height in points for multi-line text fields",
+          "minimum": 0
+        },
+        "textTransform": {
+          "type": "string",
+          "description": "Text case transformation before rendering",
+          "enum": ["none", "uppercase", "lowercase"],
+          "default": "none"
+        },
+        "numberFormat": {
+          "$ref": "#/$defs/NumberFormat"
+        },
+        "dateFormat": {
+          "type": "string",
+          "description": "Date format pattern (e.g., 'MM/DD/YYYY', 'YYYY-MM-DD')",
+          "default": "MM/DD/YYYY"
+        },
+        "checkboxStyle": {
+          "type": "string",
+          "description": "How to render a checked checkbox",
+          "enum": ["X", "checkmark", "filled"],
+          "default": "X"
+        }
+      }
+    },
+
+    "Padding": {
+      "type": "object",
+      "description": "Internal padding between the field box edges and the rendered text, in points",
+      "additionalProperties": false,
+      "properties": {
+        "top": { "type": "number", "default": 2, "minimum": 0 },
+        "right": { "type": "number", "default": 2, "minimum": 0 },
+        "bottom": { "type": "number", "default": 2, "minimum": 0 },
+        "left": { "type": "number", "default": 2, "minimum": 0 }
+      }
+    },
+
+    "NumberFormat": {
+      "type": "object",
+      "description": "Formatting rules for numeric field types (currency, integer, percentage)",
+      "additionalProperties": false,
+      "properties": {
+        "decimals": {
+          "type": "integer",
+          "description": "Number of decimal places to display (0 = whole dollars on 1040, 2 = dollars+cents on W-2)",
+          "default": 0,
+          "minimum": 0
+        },
+        "thousandsSeparator": {
+          "type": "boolean",
+          "description": "Whether to display comma separators (e.g., '1,234,567')",
+          "default": true
+        },
+        "prefix": {
+          "type": "string",
+          "description": "Text prefix (e.g., '$')",
+          "default": ""
+        },
+        "suffix": {
+          "type": "string",
+          "description": "Text suffix (e.g., '%')",
+          "default": ""
+        },
+        "negativeStyle": {
+          "type": "string",
+          "description": "How to render negative numbers (IRS typically uses parentheses)",
+          "enum": ["minus", "parentheses"],
+          "default": "parentheses"
+        }
+      }
+    },
+
+    "Computation": {
+      "type": "object",
+      "description": "Defines a computed field whose value is derived from other fields. The formula uses field IDs prefixed with $ (e.g., '$f1040.page1.line9 - $f1040.page1.line14').",
+      "required": ["formula", "dependencies"],
+      "additionalProperties": false,
+      "properties": {
+        "formula": {
+          "type": "string",
+          "description": "Arithmetic expression using field ID references (prefixed with $)"
+        },
+        "dependencies": {
+          "type": "array",
+          "description": "List of field IDs this computation depends on, for evaluation ordering",
+          "items": { "type": "string" }
+        }
+      }
+    },
+
+    "Validation": {
+      "type": "object",
+      "description": "Validation rules to enforce on field values before rendering",
+      "additionalProperties": false,
+      "properties": {
+        "required": {
+          "type": "boolean",
+          "description": "Whether this field must have a non-empty value",
+          "default": false
+        },
+        "minLength": {
+          "type": "integer",
+          "description": "Minimum character length for text values",
+          "minimum": 0
+        },
+        "maxLength": {
+          "type": "integer",
+          "description": "Maximum character length for text values",
+          "minimum": 0
+        },
+        "min": {
+          "type": "number",
+          "description": "Minimum numeric value"
+        },
+        "max": {
+          "type": "number",
+          "description": "Maximum numeric value"
+        },
+        "pattern": {
+          "type": "string",
+          "description": "Regular expression pattern for value validation"
+        },
+        "allowedValues": {
+          "type": "array",
+          "description": "Exhaustive list of allowed values",
+          "items": {}
+        }
+      }
+    },
+
+    "OverflowConfig": {
+      "type": "object",
+      "description": "Controls behavior when the rendered value exceeds the field box dimensions",
+      "additionalProperties": false,
+      "properties": {
+        "strategy": {
+          "type": "string",
+          "description": "How to handle overflow. 'truncate': clip text. 'scale': reduce font size. 'wrap': wrap to next line. 'continue': flow into a continuation field.",
+          "enum": ["truncate", "scale", "wrap", "continue"],
+          "default": "truncate"
+        },
+        "continuationFieldId": {
+          "type": "string",
+          "description": "When strategy is 'continue', the field ID to overflow into"
+        },
+        "minFontSize": {
+          "type": "number",
+          "description": "When strategy is 'scale', the smallest allowed font size before falling back to truncation",
+          "minimum": 4
+        }
+      }
+    },
+
+    "ConditionalVisibility": {
+      "type": "object",
+      "description": "Makes a field visible/rendered only when a condition is met (e.g., show spouse SSN only when filing status is 'Married Filing Jointly')",
+      "required": ["dependsOn", "condition"],
+      "additionalProperties": false,
+      "properties": {
+        "dependsOn": {
+          "type": "string",
+          "description": "Field ID or JSONPath dataRef expression to evaluate"
+        },
+        "condition": {
+          "type": "string",
+          "description": "Comparison operator",
+          "enum": ["equals", "notEquals", "greaterThan", "lessThan", "isNotEmpty", "isEmpty", "in"]
+        },
+        "value": {
+          "description": "The value to compare against (not needed for isEmpty/isNotEmpty)"
+        }
+      }
+    },
+
+    "EnumOption": {
+      "type": "object",
+      "description": "An option for enum-type fields (e.g., individual radio buttons for filing status). Each option can have its own position on the form.",
+      "required": ["value", "label"],
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "type": "string",
+          "description": "The data value that selects this option"
+        },
+        "label": {
+          "type": "string",
+          "description": "Human-readable label for this option"
+        },
+        "position": {
+          "$ref": "#/$defs/Position",
+          "description": "Position of this specific option's checkbox/radio on the form (overrides the parent field position)"
+        }
+      }
+    },
+
+    "FieldGroup": {
+      "type": "object",
+      "description": "A logical grouping of related fields for organizational purposes and batch operations",
+      "required": ["id", "label", "fieldIds"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique group identifier"
+        },
+        "label": {
+          "type": "string",
+          "description": "Human-readable group name"
+        },
+        "description": {
+          "type": "string",
+          "description": "Optional description of this field group"
+        },
+        "fieldIds": {
+          "type": "array",
+          "description": "Ordered list of field IDs belonging to this group",
+          "items": { "type": "string" }
+        }
+      }
+    }
+  }
+}

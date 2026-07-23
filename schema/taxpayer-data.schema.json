@@ -1,0 +1,437 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://instead.com/schemas/taxpayer-data/v1",
+  "title": "Taxpayer Data Schema",
+  "description": "Defines the structure for taxpayer data that annotation dataRef (JSONPath) expressions resolve against. This schema demonstrates how deeply nested tax data maps to form field annotations.",
+  "type": "object",
+  "required": ["taxpayer", "income"],
+  "additionalProperties": false,
+  "properties": {
+    "taxpayer": {
+      "$ref": "#/$defs/TaxpayerInfo"
+    },
+    "income": {
+      "$ref": "#/$defs/Income"
+    },
+    "adjustments": {
+      "$ref": "#/$defs/Adjustments"
+    },
+    "schedules": {
+      "$ref": "#/$defs/Schedules"
+    },
+    "deductions": {
+      "$ref": "#/$defs/Deductions"
+    },
+    "credits": {
+      "$ref": "#/$defs/Credits"
+    },
+    "payments": {
+      "$ref": "#/$defs/Payments"
+    },
+    "refundOrOwed": {
+      "$ref": "#/$defs/RefundOrOwed"
+    }
+  },
+
+  "$defs": {
+
+    "TaxpayerInfo": {
+      "type": "object",
+      "description": "Personal identification and filing information",
+      "required": ["primary", "address", "filingStatus"],
+      "additionalProperties": false,
+      "properties": {
+        "primary": {
+          "$ref": "#/$defs/Person",
+          "description": "Primary taxpayer information"
+        },
+        "spouse": {
+          "$ref": "#/$defs/Person",
+          "description": "Spouse information (required for MFJ/MFS)"
+        },
+        "address": {
+          "$ref": "#/$defs/Address"
+        },
+        "filingStatus": {
+          "type": "string",
+          "enum": ["single", "marriedFilingJointly", "marriedFilingSeparately", "headOfHousehold", "qualifyingSurvivingSpouse"],
+          "description": "Tax filing status"
+        },
+        "dependents": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Dependent"
+          }
+        },
+        "digitalAssets": {
+          "type": "boolean",
+          "description": "Whether taxpayer received/sold/exchanged digital assets"
+        },
+        "presidentialElectionFund": {
+          "type": "boolean",
+          "description": "Whether to designate $3 to Presidential Election Campaign Fund"
+        }
+      }
+    },
+
+    "Person": {
+      "type": "object",
+      "required": ["firstName", "lastName", "ssn"],
+      "additionalProperties": false,
+      "properties": {
+        "firstName": { "type": "string" },
+        "middleInitial": { "type": "string", "maxLength": 1 },
+        "lastName": { "type": "string" },
+        "ssn": {
+          "type": "string",
+          "pattern": "^\\d{3}-\\d{2}-\\d{4}$",
+          "description": "Social Security Number (XXX-XX-XXXX)"
+        },
+        "dateOfBirth": {
+          "type": "string",
+          "format": "date",
+          "description": "ISO 8601 date (YYYY-MM-DD)"
+        },
+        "occupation": { "type": "string" }
+      }
+    },
+
+    "Address": {
+      "type": "object",
+      "required": ["street", "city", "state", "zipCode"],
+      "additionalProperties": false,
+      "properties": {
+        "street": { "type": "string", "description": "Street address" },
+        "apt": { "type": "string", "description": "Apartment, suite, or unit number" },
+        "city": { "type": "string" },
+        "state": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 2,
+          "description": "Two-letter state abbreviation"
+        },
+        "zipCode": {
+          "type": "string",
+          "pattern": "^\\d{5}(-\\d{4})?$",
+          "description": "5-digit or 9-digit ZIP code"
+        },
+        "foreignCountry": { "type": "string" },
+        "foreignProvince": { "type": "string" },
+        "foreignPostalCode": { "type": "string" }
+      }
+    },
+
+    "Dependent": {
+      "type": "object",
+      "required": ["firstName", "lastName", "ssn", "relationship"],
+      "additionalProperties": false,
+      "properties": {
+        "firstName": { "type": "string" },
+        "lastName": { "type": "string" },
+        "ssn": { "type": "string", "pattern": "^\\d{3}-\\d{2}-\\d{4}$" },
+        "relationship": { "type": "string" },
+        "childTaxCredit": {
+          "type": "boolean",
+          "description": "Qualifies for Child Tax Credit"
+        },
+        "otherDependentCredit": {
+          "type": "boolean",
+          "description": "Qualifies for Credit for Other Dependents"
+        }
+      }
+    },
+
+    "Income": {
+      "type": "object",
+      "description": "All income sources, organized by type. Arrays support multiple instances (e.g., multiple W-2s).",
+      "additionalProperties": false,
+      "properties": {
+        "wages": {
+          "type": "array",
+          "description": "W-2 wage and salary income (one entry per employer)",
+          "items": { "$ref": "#/$defs/W2Income" }
+        },
+        "totalWages": {
+          "type": "number",
+          "description": "Sum of all W-2 Box 1 amounts → Form 1040 Line 1a"
+        },
+        "householdEmployeeWages": { "type": "number", "description": "1040 Line 1b" },
+        "tipIncome": { "type": "number", "description": "1040 Line 1c" },
+        "medicaidWaiver": { "type": "number", "description": "1040 Line 1d" },
+        "dependentCareBenefits": { "type": "number", "description": "1040 Line 1e" },
+        "adoptionBenefits": { "type": "number", "description": "1040 Line 1f" },
+        "form8919Wages": { "type": "number", "description": "1040 Line 1g" },
+        "strikeDisasterBenefits": { "type": "number", "description": "1040 Line 1h" },
+        "totalWagesAll": { "type": "number", "description": "1040 Line 1z - Sum of 1a through 1h" },
+        "taxExemptInterest": { "type": "number", "description": "1040 Line 2a" },
+        "taxableInterest": { "type": "number", "description": "1040 Line 2b" },
+        "qualifiedDividends": { "type": "number", "description": "1040 Line 3a" },
+        "ordinaryDividends": { "type": "number", "description": "1040 Line 3b" },
+        "iraDistributions": { "type": "number", "description": "1040 Line 4a" },
+        "taxableIraDistributions": { "type": "number", "description": "1040 Line 4b" },
+        "pensionsAnnuities": { "type": "number", "description": "1040 Line 5a" },
+        "taxablePensionsAnnuities": { "type": "number", "description": "1040 Line 5b" },
+        "socialSecurity": { "type": "number", "description": "1040 Line 6a" },
+        "taxableSocialSecurity": { "type": "number", "description": "1040 Line 6b" },
+        "capitalGainOrLoss": { "type": "number", "description": "1040 Line 7" },
+        "otherIncome": { "type": "number", "description": "1040 Line 8 — from Schedule 1" },
+        "totalIncome": { "type": "number", "description": "1040 Line 9 — Total income" }
+      }
+    },
+
+    "W2Income": {
+      "type": "object",
+      "description": "Data from a single W-2 form. Path example: $.income.wages[0].amount",
+      "required": ["employerName", "employerEin", "amount"],
+      "additionalProperties": false,
+      "properties": {
+        "employerName": { "type": "string" },
+        "employerEin": {
+          "type": "string",
+          "pattern": "^\\d{2}-\\d{7}$",
+          "description": "Employer Identification Number (XX-XXXXXXX)"
+        },
+        "employerAddress": { "$ref": "#/$defs/Address" },
+        "controlNumber": { "type": "string", "description": "W-2 Box d" },
+        "amount": { "type": "number", "description": "W-2 Box 1: Wages, tips, other compensation" },
+        "federalWithheld": { "type": "number", "description": "W-2 Box 2: Federal income tax withheld" },
+        "socialSecurityWages": { "type": "number", "description": "W-2 Box 3" },
+        "socialSecurityWithheld": { "type": "number", "description": "W-2 Box 4" },
+        "medicareWages": { "type": "number", "description": "W-2 Box 5" },
+        "medicareWithheld": { "type": "number", "description": "W-2 Box 6" },
+        "socialSecurityTips": { "type": "number", "description": "W-2 Box 7" },
+        "allocatedTips": { "type": "number", "description": "W-2 Box 8" },
+        "dependentCareBenefits": { "type": "number", "description": "W-2 Box 10" },
+        "nonqualifiedPlans": { "type": "number", "description": "W-2 Box 11" },
+        "box12": {
+          "type": "array",
+          "description": "W-2 Box 12 entries (code + amount pairs)",
+          "items": {
+            "type": "object",
+            "properties": {
+              "code": { "type": "string", "description": "Box 12 letter code (e.g., 'DD', 'D', 'W')" },
+              "amount": { "type": "number" }
+            },
+            "required": ["code", "amount"]
+          }
+        },
+        "statutoryEmployee": { "type": "boolean", "description": "W-2 Box 13" },
+        "retirementPlan": { "type": "boolean", "description": "W-2 Box 13" },
+        "thirdPartySickPay": { "type": "boolean", "description": "W-2 Box 13" },
+        "stateWages": {
+          "type": "array",
+          "description": "W-2 Boxes 15-17 (up to 2 states)",
+          "items": {
+            "type": "object",
+            "properties": {
+              "state": { "type": "string" },
+              "stateId": { "type": "string" },
+              "stateWages": { "type": "number" },
+              "stateWithheld": { "type": "number" }
+            }
+          },
+          "maxItems": 2
+        }
+      }
+    },
+
+    "Adjustments": {
+      "type": "object",
+      "description": "Adjustments to income (from Schedule 1 Part II)",
+      "additionalProperties": false,
+      "properties": {
+        "totalAdjustments": { "type": "number", "description": "1040 Line 10 — from Schedule 1 Line 26" },
+        "adjustedGrossIncome": { "type": "number", "description": "1040 Line 11 — AGI" }
+      }
+    },
+
+    "Schedules": {
+      "type": "object",
+      "description": "Attached schedules. Arrays support multiple instances (e.g., multiple businesses).",
+      "additionalProperties": false,
+      "properties": {
+        "scheduleC": {
+          "type": "array",
+          "description": "Schedule C — Profit or Loss from Business. Path: $.schedules.scheduleC[0].grossReceipts",
+          "items": { "$ref": "#/$defs/ScheduleC" }
+        }
+      }
+    },
+
+    "ScheduleC": {
+      "type": "object",
+      "description": "Schedule C data for a single business",
+      "required": ["businessName", "grossReceipts"],
+      "additionalProperties": false,
+      "properties": {
+        "businessName": { "type": "string", "description": "Line C" },
+        "proprietorName": { "type": "string" },
+        "businessEin": { "type": "string", "pattern": "^\\d{2}-\\d{7}$", "description": "Line D" },
+        "businessAddress": { "$ref": "#/$defs/Address", "description": "Line E" },
+        "principalBusinessCode": { "type": "string", "description": "Line B — 6-digit NAICS code" },
+        "principalBusinessDescription": { "type": "string", "description": "Line A" },
+        "accountingMethod": {
+          "type": "string",
+          "enum": ["cash", "accrual", "other"],
+          "description": "Line F"
+        },
+        "materiallyParticipated": { "type": "boolean", "description": "Line G" },
+        "startedInCurrentYear": { "type": "boolean", "description": "Line H" },
+        "paymentsRequiring1099": { "type": "boolean", "description": "Line I" },
+        "filed1099s": { "type": "boolean", "description": "Line J" },
+
+        "grossReceipts": { "type": "number", "description": "Line 1" },
+        "returns": { "type": "number", "description": "Line 2" },
+        "costOfGoodsSold": { "type": "number", "description": "Line 4" },
+        "grossIncome": { "type": "number", "description": "Line 5 (computed)" },
+        "otherIncome": { "type": "number", "description": "Line 6" },
+        "grossIncomeTotal": { "type": "number", "description": "Line 7 (computed)" },
+
+        "expenses": {
+          "$ref": "#/$defs/ScheduleCExpenses"
+        },
+
+        "totalExpenses": { "type": "number", "description": "Line 28 (computed)" },
+        "tentativeProfit": { "type": "number", "description": "Line 29 (computed)" },
+        "homeBusinessExpense": { "type": "number", "description": "Line 30" },
+        "netProfit": { "type": "number", "description": "Line 31 (computed)" }
+      }
+    },
+
+    "ScheduleCExpenses": {
+      "type": "object",
+      "description": "Schedule C Part II — Expenses (Lines 8-27)",
+      "additionalProperties": false,
+      "properties": {
+        "advertising": { "type": "number", "description": "Line 8" },
+        "carAndTruck": { "type": "number", "description": "Line 9" },
+        "commissions": { "type": "number", "description": "Line 10" },
+        "contractLabor": { "type": "number", "description": "Line 11" },
+        "depletion": { "type": "number", "description": "Line 12" },
+        "depreciation": { "type": "number", "description": "Line 13" },
+        "employeeBenefits": { "type": "number", "description": "Line 14" },
+        "insurance": { "type": "number", "description": "Line 15" },
+        "interestMortgage": { "type": "number", "description": "Line 16a" },
+        "interestOther": { "type": "number", "description": "Line 16b" },
+        "legalAndProfessional": { "type": "number", "description": "Line 17" },
+        "officeExpense": { "type": "number", "description": "Line 18" },
+        "pensionAndProfitSharing": { "type": "number", "description": "Line 19" },
+        "rentVehicles": { "type": "number", "description": "Line 20a" },
+        "rentOther": { "type": "number", "description": "Line 20b" },
+        "repairs": { "type": "number", "description": "Line 21" },
+        "supplies": { "type": "number", "description": "Line 22" },
+        "taxesAndLicenses": { "type": "number", "description": "Line 23" },
+        "travel": { "type": "number", "description": "Line 24a" },
+        "meals": { "type": "number", "description": "Line 24b" },
+        "utilities": { "type": "number", "description": "Line 25" },
+        "wages": { "type": "number", "description": "Line 26" },
+        "otherExpenses": { "type": "number", "description": "Line 27a" },
+        "otherExpensesList": {
+          "type": "array",
+          "description": "Part V — itemized other expenses",
+          "items": {
+            "type": "object",
+            "properties": {
+              "description": { "type": "string" },
+              "amount": { "type": "number" }
+            },
+            "required": ["description", "amount"]
+          }
+        }
+      }
+    },
+
+    "Deductions": {
+      "type": "object",
+      "description": "Tax deductions — standard or itemized",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["standard", "itemized"],
+          "description": "Which deduction method was used"
+        },
+        "standardAmount": { "type": "number", "description": "1040 Line 12 (if standard)" },
+        "itemized": {
+          "$ref": "#/$defs/ItemizedDeductions"
+        },
+        "qualifiedBusinessIncome": { "type": "number", "description": "1040 Line 13 — QBI deduction" },
+        "totalDeductions": { "type": "number", "description": "1040 Line 14" },
+        "taxableIncome": { "type": "number", "description": "1040 Line 15" }
+      }
+    },
+
+    "ItemizedDeductions": {
+      "type": "object",
+      "description": "Schedule A — Itemized Deductions",
+      "additionalProperties": false,
+      "properties": {
+        "medicalExpenses": { "type": "number" },
+        "stateAndLocalTaxes": { "type": "number", "description": "SALT (capped at $10,000)" },
+        "mortgageInterest": { "type": "number" },
+        "charitableContributions": { "type": "number" },
+        "casualtyLosses": { "type": "number" },
+        "otherItemizedDeductions": { "type": "number" },
+        "total": { "type": "number" }
+      }
+    },
+
+    "Credits": {
+      "type": "object",
+      "description": "Tax credits",
+      "additionalProperties": false,
+      "properties": {
+        "childTaxCredit": { "type": "number", "description": "1040 Line 19" },
+        "otherCredits": { "type": "number", "description": "1040 Line 21 — from Schedule 3" },
+        "totalCredits": { "type": "number" }
+      }
+    },
+
+    "Payments": {
+      "type": "object",
+      "description": "Tax payments already made",
+      "additionalProperties": false,
+      "properties": {
+        "federalWithheld": {
+          "type": "number",
+          "description": "1040 Line 25a — Total federal income tax withheld from all W-2s and 1099s"
+        },
+        "estimatedPayments": {
+          "type": "array",
+          "description": "Quarterly estimated tax payments (Form 1040-ES)",
+          "items": {
+            "type": "object",
+            "properties": {
+              "quarter": { "type": "integer", "minimum": 1, "maximum": 4 },
+              "date": { "type": "string", "format": "date" },
+              "amount": { "type": "number" }
+            },
+            "required": ["quarter", "amount"]
+          }
+        },
+        "totalEstimatedPayments": { "type": "number", "description": "1040 Line 26" },
+        "earnedIncomeCredit": { "type": "number", "description": "1040 Line 27" },
+        "additionalChildTaxCredit": { "type": "number", "description": "1040 Line 28" },
+        "americanOpportunityCredit": { "type": "number", "description": "1040 Line 29" },
+        "otherPayments": { "type": "number", "description": "1040 Line 31 — from Schedule 3" },
+        "totalPayments": { "type": "number", "description": "1040 Line 33" }
+      }
+    },
+
+    "RefundOrOwed": {
+      "type": "object",
+      "description": "Refund or amount owed calculation",
+      "additionalProperties": false,
+      "properties": {
+        "overpayment": { "type": "number", "description": "1040 Line 34" },
+        "refundAmount": { "type": "number", "description": "1040 Line 35a" },
+        "routingNumber": { "type": "string", "description": "1040 Line 35b" },
+        "accountType": { "type": "string", "enum": ["checking", "savings"], "description": "1040 Line 35c" },
+        "accountNumber": { "type": "string", "description": "1040 Line 35d" },
+        "appliedToNextYear": { "type": "number", "description": "1040 Line 36" },
+        "amountOwed": { "type": "number", "description": "1040 Line 37" },
+        "estimatedPenalty": { "type": "number", "description": "1040 Line 38" }
+      }
+    }
+  }
+}

@@ -1,0 +1,243 @@
+{
+  "metadata": {
+    "formId": "irs-1040-2024-v1",
+    "formNumber": "1040",
+    "title": "U.S. Individual Income Tax Return",
+    "taxYear": 2024,
+    "version": "1.0.0",
+    "pageSize": "letter"
+  },
+  "fieldGroups": [
+    {
+      "id": "identity",
+      "label": "Identity & Address",
+      "fieldIds": [
+        "f1040.page1.firstName",
+        "f1040.page1.lastName",
+        "f1040.page1.ssn"
+      ]
+    },
+    {
+      "id": "income",
+      "label": "Income & Taxable Amount",
+      "fieldIds": [
+        "f1040.page1.line1a",
+        "f1040.page1.line11",
+        "f1040.page1.line15"
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "pageNumber": 1,
+      "dimensions": {
+        "width": 612,
+        "height": 792
+      },
+      "fields": [
+        {
+          "id": "f1040.page1.filingStatus",
+          "label": "Filing Status Selection",
+          "type": "enum",
+          "position": { "x": 36, "y": 700, "width": 540, "height": 20 },
+          "dataRef": "$.taxpayer.filingStatus",
+          "options": [
+            { "value": "single", "label": "Single", "position": { "x": 40, "y": 705, "width": 12, "height": 12 } },
+            { "value": "marriedFilingJointly", "label": "Married filing jointly", "position": { "x": 100, "y": 705, "width": 12, "height": 12 } },
+            { "value": "marriedFilingSeparately", "label": "Married filing separately", "position": { "x": 220, "y": 705, "width": 12, "height": 12 } },
+            { "value": "headOfHousehold", "label": "Head of household", "position": { "x": 360, "y": 705, "width": 12, "height": 12 } },
+            { "value": "qualifyingSurvivingSpouse", "label": "Qualifying surviving spouse", "position": { "x": 480, "y": 705, "width": 12, "height": 12 } }
+          ]
+        },
+        {
+          "id": "f1040.page1.firstName",
+          "label": "Primary First Name",
+          "type": "text",
+          "position": { "x": 36, "y": 675, "width": 150, "height": 16 },
+          "dataRef": "$.taxpayer.primary.firstName"
+        },
+        {
+          "id": "f1040.page1.lastName",
+          "label": "Primary Last Name",
+          "type": "text",
+          "position": { "x": 190, "y": 675, "width": 200, "height": 16 },
+          "dataRef": "$.taxpayer.primary.lastName"
+        },
+        {
+          "id": "f1040.page1.ssn",
+          "label": "Primary SSN (Comb Box)",
+          "type": "comb",
+          "combDigits": 9,
+          "position": { "x": 420, "y": 675, "width": 150, "height": 16 },
+          "dataRef": "$.taxpayer.primary.ssn"
+        },
+        {
+          "id": "f1040.page1.spouseFirstName",
+          "label": "Spouse First Name",
+          "type": "text",
+          "position": { "x": 36, "y": 655, "width": 150, "height": 16 },
+          "dataRef": "$.taxpayer.spouse.firstName"
+        },
+        {
+          "id": "f1040.page1.spouseSsn",
+          "label": "Spouse SSN",
+          "type": "ssn",
+          "position": { "x": 420, "y": 655, "width": 150, "height": 16 },
+          "dataRef": "$.taxpayer.spouse.ssn"
+        },
+        {
+          "id": "f1040.page1.street",
+          "label": "Home Address",
+          "type": "text",
+          "position": { "x": 36, "y": 635, "width": 350, "height": 16 },
+          "dataRef": "$.taxpayer.address.street"
+        },
+        {
+          "id": "f1040.page1.city",
+          "label": "City",
+          "type": "text",
+          "position": { "x": 36, "y": 615, "width": 150, "height": 16 },
+          "dataRef": "$.taxpayer.address.city"
+        },
+        {
+          "id": "f1040.page1.state",
+          "label": "State",
+          "type": "text",
+          "position": { "x": 190, "y": 615, "width": 40, "height": 16 },
+          "dataRef": "$.taxpayer.address.state"
+        },
+        {
+          "id": "f1040.page1.zipCode",
+          "label": "Zip Code",
+          "type": "text",
+          "position": { "x": 240, "y": 615, "width": 80, "height": 16 },
+          "dataRef": "$.taxpayer.address.zipCode"
+        },
+        {
+          "id": "f1040.page1.digitalAssets",
+          "label": "Digital Assets Question",
+          "type": "checkbox",
+          "position": { "x": 450, "y": 590, "width": 12, "height": 12 },
+          "dataRef": "$.taxpayer.digitalAssets"
+        },
+        {
+          "id": "f1040.page1.line1a",
+          "label": "Line 1a - Wages, salaries, tips",
+          "irsLine": "1a",
+          "type": "currency",
+          "position": { "x": 430, "y": 500, "width": 140, "height": 16 },
+          "formatting": { "alignment": "right", "numberFormat": { "decimals": 0, "thousandsSeparator": true } },
+          "dataRef": "$.income.totalWages"
+        },
+        {
+          "id": "f1040.page1.line2b",
+          "label": "Line 2b - Taxable interest",
+          "irsLine": "2b",
+          "type": "currency",
+          "position": { "x": 430, "y": 480, "width": 140, "height": 16 },
+          "formatting": { "alignment": "right" },
+          "dataRef": "$.income.taxableInterest"
+        },
+        {
+          "id": "f1040.page1.line9",
+          "label": "Line 9 - Total income",
+          "irsLine": "9",
+          "type": "currency",
+          "position": { "x": 430, "y": 420, "width": 140, "height": 16 },
+          "formatting": { "alignment": "right" },
+          "dataRef": "$.income.totalIncome"
+        },
+        {
+          "id": "f1040.page1.line11",
+          "label": "Line 11 - Adjusted gross income",
+          "irsLine": "11",
+          "type": "currency",
+          "position": { "x": 430, "y": 380, "width": 140, "height": 16 },
+          "formatting": { "alignment": "right" },
+          "dataRef": "$.adjustments.adjustedGrossIncome"
+        },
+        {
+          "id": "f1040.page1.line15",
+          "label": "Line 15 - Taxable income",
+          "irsLine": "15",
+          "type": "currency",
+          "position": { "x": 430, "y": 340, "width": 140, "height": 16 },
+          "formatting": { "alignment": "right" },
+          "dataRef": "$.deductions.taxableIncome"
+        }
+      ]
+    },
+    {
+      "pageNumber": 2,
+      "dimensions": {
+        "width": 612,
+        "height": 792
+      },
+      "fields": [
+        {
+          "id": "f1040.page2.line25a",
+          "label": "Line 25a - Federal income tax withheld",
+          "irsLine": "25a",
+          "type": "currency",
+          "position": { "x": 430, "y": 550, "width": 140, "height": 16 },
+          "formatting": { "alignment": "right" },
+          "dataRef": "$.payments.federalWithheld"
+        },
+        {
+          "id": "f1040.page2.numDependents",
+          "label": "Number of Dependents",
+          "type": "integer",
+          "position": { "x": 540, "y": 530, "width": 30, "height": 16 },
+          "formatting": { "alignment": "center" },
+          "dataRef": "$.taxpayer.numDependents"
+        },
+        {
+          "id": "f1040.page2.line37",
+          "label": "Line 37 - Amount you owe",
+          "irsLine": "37",
+          "type": "currency",
+          "position": { "x": 430, "y": 300, "width": 140, "height": 16 },
+          "formatting": { "alignment": "right" },
+          "dataRef": "$.refundOrOwed.amountOwed"
+        },
+        {
+          "id": "f1040.page2.primaryOccupation",
+          "label": "Your Occupation",
+          "type": "text",
+          "position": { "x": 36, "y": 200, "width": 200, "height": 16 },
+          "dataRef": "$.taxpayer.primary.occupation"
+        },
+        {
+          "id": "f1040.page2.spouseOccupation",
+          "label": "Spouse Occupation",
+          "type": "text",
+          "position": { "x": 250, "y": 200, "width": 200, "height": 16 },
+          "dataRef": "$.taxpayer.spouse.occupation"
+        },
+        {
+          "id": "f1040.page2.signatureDate",
+          "label": "Date Signed",
+          "type": "date",
+          "position": { "x": 440, "y": 220, "width": 130, "height": 16 },
+          "formatting": { "dateFormat": "MM/DD/YYYY" },
+          "dataRef": "$.taxpayer.signatureDate"
+        },
+        {
+          "id": "f1040.page2.effectiveTaxRate",
+          "label": "Effective Tax Rate",
+          "type": "percentage",
+          "position": { "x": 440, "y": 180, "width": 130, "height": 16 },
+          "formatting": { "alignment": "right" },
+          "dataRef": "$.taxpayer.effectiveTaxRate"
+        },
+        {
+          "id": "f1040.page2.employerEin",
+          "label": "Employer EIN",
+          "type": "ein",
+          "position": { "x": 440, "y": 160, "width": 130, "height": 16 },
+          "dataRef": "$.income.wages[0].employerEin"
+        }
+      ]
+    }
+  ]
+}

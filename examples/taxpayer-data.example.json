@@ -1,0 +1,101 @@
+{
+  "taxpayer": {
+    "primary": {
+      "firstName": "John",
+      "middleInitial": "A",
+      "lastName": "Smith",
+      "ssn": "123-45-6789",
+      "occupation": "Software Engineer"
+    },
+    "spouse": {
+      "firstName": "Jane",
+      "middleInitial": "B",
+      "lastName": "Smith",
+      "ssn": "987-65-4321",
+      "occupation": "Graphic Designer"
+    },
+    "address": {
+      "street": "742 Evergreen Terrace",
+      "apt": "Apt 4B",
+      "city": "San Francisco",
+      "state": "CA",
+      "zipCode": "94102"
+    },
+    "filingStatus": "marriedFilingJointly",
+    "dependents": [
+      {
+        "firstName": "Emma",
+        "lastName": "Smith",
+        "ssn": "555-00-1234",
+        "relationship": "daughter",
+        "childTaxCredit": true
+      }
+    ],
+    "digitalAssets": false,
+    "numDependents": 1,
+    "signatureDate": "04/12/2025",
+    "effectiveTaxRate": 14.5
+  },
+  "income": {
+    "wages": [
+      {
+        "employerName": "Acme Technology Inc",
+        "employerEin": "12-3456789",
+        "amount": 95000,
+        "federalWithheld": 14250
+      },
+      {
+        "employerName": "Bay Area Design Studio",
+        "employerEin": "98-7654321",
+        "amount": 72000,
+        "federalWithheld": 10800
+      }
+    ],
+    "totalWages": 167000,
+    "totalWagesAll": 167000,
+    "taxableInterest": 1250,
+    "qualifiedDividends": 2800,
+    "ordinaryDividends": 3200,
+    "otherIncome": 35650,
+    "totalIncome": 207100
+  },
+  "adjustments": {
+    "adjustedGrossIncome": 207100
+  },
+  "schedules": {
+    "scheduleC": [
+      {
+        "businessName": "Smith Digital Consulting LLC",
+        "businessEin": "45-6789012",
+        "principalBusinessCode": "541511",
+        "accountingMethod": "cash",
+        "grossReceipts": 48000,
+        "grossIncomeTotal": 48000,
+        "expenses": {
+          "advertising": 1200,
+          "officeExpense": 3150,
+          "supplies": 8000
+        },
+        "totalExpenses": 12350,
+        "netProfit": 35650
+      }
+    ]
+  },
+  "deductions": {
+    "type": "standard",
+    "standardAmount": 29200,
+    "totalDeductions": 29200,
+    "taxableIncome": 177900
+  },
+  "credits": {
+    "childTaxCredit": 2000,
+    "totalCredits": 2000
+  },
+  "payments": {
+    "federalWithheld": 25050,
+    "totalPayments": 25050
+  },
+  "refundOrOwed": {
+    "amountOwed": 7231
+  }
+}

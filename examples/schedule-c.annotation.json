@@ -1,0 +1,486 @@
+{
+  "metadata": {
+    "formId": "irs-schedule-c-2024-v1",
+    "formNumber": "Schedule C",
+    "title": "Profit or Loss From Business",
+    "taxYear": 2024,
+    "version": "1.0.0",
+    "pageSize": "letter"
+  },
+  "fieldGroups": [
+    {
+      "id": "sch_c_info",
+      "label": "Business Info",
+      "fieldIds": [
+        "schC.name",
+        "schC.ein",
+        "schC.code"
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "pageNumber": 1,
+      "dimensions": {
+        "width": 612,
+        "height": 792
+      },
+      "fields": [
+        {
+          "id": "schC.name",
+          "type": "text",
+          "position": {
+            "x": 36,
+            "y": 700,
+            "width": 300,
+            "height": 16
+          },
+          "dataRef": "$.schedules.scheduleC[0].businessName"
+        },
+        {
+          "id": "schC.ein",
+          "type": "ein",
+          "position": {
+            "x": 400,
+            "y": 700,
+            "width": 150,
+            "height": 16
+          },
+          "dataRef": "$.schedules.scheduleC[0].businessEin"
+        },
+        {
+          "id": "schC.code",
+          "type": "text",
+          "position": {
+            "x": 36,
+            "y": 680,
+            "width": 100,
+            "height": 16
+          },
+          "dataRef": "$.schedules.scheduleC[0].principalBusinessCode"
+        },
+        {
+          "id": "schC.methodCash",
+          "type": "checkbox",
+          "position": {
+            "x": 36,
+            "y": 660,
+            "width": 12,
+            "height": 12
+          },
+          "dataRef": "$.schedules.scheduleC[0].accountingMethod",
+          "conditionalVisibility": {
+            "dependsOn": "$.schedules.scheduleC[0].accountingMethod",
+            "condition": "equals",
+            "value": "cash"
+          }
+        },
+        {
+          "id": "schC.methodAccrual",
+          "type": "checkbox",
+          "position": {
+            "x": 80,
+            "y": 660,
+            "width": 12,
+            "height": 12
+          },
+          "dataRef": "$.schedules.scheduleC[0].accountingMethod",
+          "conditionalVisibility": {
+            "dependsOn": "$.schedules.scheduleC[0].accountingMethod",
+            "condition": "equals",
+            "value": "accrual"
+          }
+        },
+        {
+          "id": "schC.methodOther",
+          "type": "checkbox",
+          "position": {
+            "x": 130,
+            "y": 660,
+            "width": 12,
+            "height": 12
+          },
+          "dataRef": "$.schedules.scheduleC[0].accountingMethod",
+          "conditionalVisibility": {
+            "dependsOn": "$.schedules.scheduleC[0].accountingMethod",
+            "condition": "equals",
+            "value": "other"
+          }
+        },
+        {
+          "id": "schC.line1",
+          "type": "currency",
+          "position": {
+            "x": 430,
+            "y": 600,
+            "width": 140,
+            "height": 16
+          },
+          "dataRef": "$.schedules.scheduleC[0].grossReceipts"
+        },
+        {
+          "id": "schC.line2",
+          "type": "currency",
+          "position": {
+            "x": 430,
+            "y": 584,
+            "width": 140,
+            "height": 16
+          },
+          "dataRef": "$.schedules.scheduleC[0].returns"
+        },
+        {
+          "id": "schC.line3",
+          "type": "currency",
+          "position": {
+            "x": 430,
+            "y": 568,
+            "width": 140,
+            "height": 16
+          }
+        },
+        {
+          "id": "schC.line4",
+          "type": "currency",
+          "position": {
+            "x": 430,
+            "y": 552,
+            "width": 140,
+            "height": 16
+          },
+          "dataRef": "$.schedules.scheduleC[0].costOfGoodsSold"
+        },
+        {
+          "id": "schC.line5",
+          "type": "currency",
+          "position": {
+            "x": 430,
+            "y": 536,
+            "width": 140,
+            "height": 16
+          },
+          "dataRef": "$.schedules.scheduleC[0].grossIncome"
+        },
+        {
+          "id": "schC.line6",
+          "type": "currency",
+          "position": {
+            "x": 430,
+            "y": 520,
+            "width": 140,
+            "height": 16
+          },
+          "dataRef": "$.schedules.scheduleC[0].otherIncome"
+        },
+        {
+          "id": "schC.line7",
+          "type": "currency",
+          "position": {
+            "x": 430,
+            "y": 504,
+            "width": 140,
+            "height": 16
+          },
+          "dataRef": "$.schedules.scheduleC[0].grossIncomeTotal"
+        },
+        {
+          "id": "schC.line8",
+          "type": "currency",
+          "position": {
+            "x": 250,
+            "y": 472,
+            "width": 140,
+            "height": 16
+          },
+          "dataRef": "$.schedules.scheduleC[0].expenses.advertising"
+        },
+        {
+          "id": "schC.line9",
+          "type": "currency",
+          "position": {
+            "x": 250,
+            "y": 456,
+            "width": 140,
+            "height": 16
+          },
+          "dataRef": "$.schedules.scheduleC[0].expenses.carAndTruck"
+        },
+        {
+          "id": "schC.line10",
+          "type": "currency",
+          "position": {
+            "x": 250,
+            "y": 440,
+            "width": 140,
+            "height": 16
+          },
+          "dataRef": "$.schedules.scheduleC[0].expenses.commissions"
+        },
+        {
+          "id": "schC.line11",
+          "type": "currency",
+          "position": {
+            "x": 250,
+            "y": 424,
+            "width": 140,
+            "height": 16
+          },
+          "dataRef": "$.schedules.scheduleC[0].expenses.contractLabor"
+        },
+        {
+          "id": "schC.line12",
+          "type": "currency",
+          "position": {
+            "x": 250,
+            "y": 408,
+            "width": 140,
+            "height": 16
+          },
+          "dataRef": "$.schedules.scheduleC[0].expenses.depletion"
+        },
+        {
+          "id": "schC.line13",
+          "type": "currency",
+          "position": {
+            "x": 250,
+            "y": 392,
+            "width": 140,
+            "height": 16
+          },
+          "dataRef": "$.schedules.scheduleC[0].expenses.depreciation"
+        },
+        {
+          "id": "schC.line14",
+          "type": "currency",
+          "position": {
+            "x": 250,
+            "y": 376,
+            "width": 140,
+            "height": 16
+          },
+          "dataRef": "$.schedules.scheduleC[0].expenses.employeeBenefits"
+        },
+        {
+          "id": "schC.line15",
+          "type": "currency",
+          "position": {
+            "x": 250,
+            "y": 360,
+            "width": 140,
+            "height": 16
+          },
+          "dataRef": "$.schedules.scheduleC[0].expenses.insurance"
+        },
+        {
+          "id": "schC.line16a",
+          "type": "currency",
+          "position": {
+            "x": 250,
+            "y": 344,
+            "width": 140,
+            "height": 16
+          },
+          "dataRef": "$.schedules.scheduleC[0].expenses.interestMortgage"
+        },
+        {
+          "id": "schC.line16b",
+          "type": "currency",
+          "position": {
+            "x": 250,
+            "y": 328,
+            "width": 140,
+            "height": 16
+          },
+          "dataRef": "$.schedules.scheduleC[0].expenses.interestOther"
+        },
+        {
+          "id": "schC.line17",
+          "type": "currency",
+          "position": {
+            "x": 250,
+            "y": 312,
+            "width": 140,
+            "height": 16
+          },
+          "dataRef": "$.schedules.scheduleC[0].expenses.legalAndProfessional"
+        },
+        {
+          "id": "schC.line18",
+          "type": "currency",
+          "position": {
+            "x": 250,
+            "y": 296,
+            "width": 140,
+            "height": 16
+          },
+          "dataRef": "$.schedules.scheduleC[0].expenses.officeExpense"
+        },
+        {
+          "id": "schC.line19",
+          "type": "currency",
+          "position": {
+            "x": 250,
+            "y": 280,
+            "width": 140,
+            "height": 16
+          },
+          "dataRef": "$.schedules.scheduleC[0].expenses.pensionAndProfitSharing"
+        },
+        {
+          "id": "schC.line20a",
+          "type": "currency",
+          "position": {
+            "x": 250,
+            "y": 264,
+            "width": 140,
+            "height": 16
+          },
+          "dataRef": "$.schedules.scheduleC[0].expenses.rentVehicles"
+        },
+        {
+          "id": "schC.line20b",
+          "type": "currency",
+          "position": {
+            "x": 250,
+            "y": 248,
+            "width": 140,
+            "height": 16
+          },
+          "dataRef": "$.schedules.scheduleC[0].expenses.rentOther"
+        },
+        {
+          "id": "schC.line21",
+          "type": "currency",
+          "position": {
+            "x": 250,
+            "y": 232,
+            "width": 140,
+            "height": 16
+          },
+          "dataRef": "$.schedules.scheduleC[0].expenses.repairs"
+        },
+        {
+          "id": "schC.line22",
+          "type": "currency",
+          "position": {
+            "x": 250,
+            "y": 216,
+            "width": 140,
+            "height": 16
+          },
+          "dataRef": "$.schedules.scheduleC[0].expenses.supplies"
+        },
+        {
+          "id": "schC.line23",
+          "type": "currency",
+          "position": {
+            "x": 430,
+            "y": 472,
+            "width": 140,
+            "height": 16
+          },
+          "dataRef": "$.schedules.scheduleC[0].expenses.taxesAndLicenses"
+        },
+        {
+          "id": "schC.line24a",
+          "type": "currency",
+          "position": {
+            "x": 430,
+            "y": 456,
+            "width": 140,
+            "height": 16
+          },
+          "dataRef": "$.schedules.scheduleC[0].expenses.travel"
+        },
+        {
+          "id": "schC.line24b",
+          "type": "currency",
+          "position": {
+            "x": 430,
+            "y": 440,
+            "width": 140,
+            "height": 16
+          },
+          "dataRef": "$.schedules.scheduleC[0].expenses.meals"
+        },
+        {
+          "id": "schC.line25",
+          "type": "currency",
+          "position": {
+            "x": 430,
+            "y": 424,
+            "width": 140,
+            "height": 16
+          },
+          "dataRef": "$.schedules.scheduleC[0].expenses.utilities"
+        },
+        {
+          "id": "schC.line26",
+          "type": "currency",
+          "position": {
+            "x": 430,
+            "y": 408,
+            "width": 140,
+            "height": 16
+          },
+          "dataRef": "$.schedules.scheduleC[0].expenses.wages"
+        },
+        {
+          "id": "schC.line27a",
+          "type": "currency",
+          "position": {
+            "x": 430,
+            "y": 392,
+            "width": 140,
+            "height": 16
+          },
+          "dataRef": "$.schedules.scheduleC[0].expenses.otherExpenses"
+        },
+        {
+          "id": "schC.line28",
+          "type": "currency",
+          "position": {
+            "x": 430,
+            "y": 376,
+            "width": 140,
+            "height": 16
+          },
+          "dataRef": "$.schedules.scheduleC[0].totalExpenses"
+        },
+        {
+          "id": "schC.line29",
+          "type": "currency",
+          "position": {
+            "x": 430,
+            "y": 360,
+            "width": 140,
+            "height": 16
+          },
+          "dataRef": "$.schedules.scheduleC[0].tentativeProfit"
+        },
+        {
+          "id": "schC.line30",
+          "type": "currency",
+          "position": {
+            "x": 430,
+            "y": 344,
+            "width": 140,
+            "height": 16
+          },
+          "dataRef": "$.schedules.scheduleC[0].homeBusinessExpense"
+        },
+        {
+          "id": "schC.line31",
+          "type": "currency",
+          "position": {
+            "x": 430,
+            "y": 328,
+            "width": 140,
+            "height": 16
+          },
+          "dataRef": "$.schedules.scheduleC[0].netProfit"
+        }
+      ]
+    }
+  ]
+}
