@@ -60,6 +60,3 @@ Read [`docs/SPECIFICATION.md`](docs/SPECIFICATION.md) for full documentation on:
 - Complete PDF integration examples in **JavaScript (`pdf-lib`)** and **Python (`ReportLab`)**.
 
 ---
-
-
-- Explain how a production backend service consumes this JSON with `pdf-lib` or `ReportLab` to produce printed PDF forms.
