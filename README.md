@@ -61,27 +61,5 @@ Read [`docs/SPECIFICATION.md`](docs/SPECIFICATION.md) for full documentation on:
 
 ---
 
-## 5-Minute Video Presentation Script
 
-If you are recording a video walkthrough for your submission, use this breakdown:
-
-### ⏱ 0:00 – 0:45 | Overview & Core Problem
-- Introduce the task: bridge flat tax form PDFs with dynamic taxpayer data models.
-- State the objective: define a declarative, framework-agnostic annotation format.
-
-### ⏱ 0:45 – 1:45 | Coordinate System & PDF Native Geometry
-- Open `schema/form-annotation.schema.json` or `types/index.ts`.
-- Explain why **72 DPI bottom-left origin** is used: PDF specifications (ISO 32000-1) measure coordinates from bottom-left in points, making `{ x, y, width, height }` directly convertible to PDF rectangles `[llx, lly, urx, ury]`.
-
-### ⏱ 1:45 – 2:45 | Data Reference via JSONPath & IRS Pub 1167
-- Open `examples/form-1040-2024.annotation.json` and `examples/taxpayer-data.example.json`.
-- Explain `dataRef` JSONPath bindings (e.g. `$.income.totalWages`).
-- Explain IRS Pub 1167 rules: monospaced Courier 10pt fonts, right-aligned currency, formatted SSN/EIN, and comb fields.
-
-### ⏱ 2:45 – 4:00 | Live Verification Run
-- In terminal, execute: `node scripts/verify.js`.
-- Show how the runner resolves JSONPath bindings, formats currency (`167,000`), comb boxes (`[1][2][3]...`), and dates.
-
-### ⏱ 4:00 – 5:00 | Production Integration & Wrap Up
-- Reference `docs/SPECIFICATION.md`.
 - Explain how a production backend service consumes this JSON with `pdf-lib` or `ReportLab` to produce printed PDF forms.
